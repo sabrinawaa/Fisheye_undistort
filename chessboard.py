@@ -94,7 +94,7 @@ corners122 = np.array([[954,56],[1007,65],[1046,71],[1083,79],[1125,88],[1165,10
 [936,210],[976,212],[1012,216],[1046,221],[1083,227],[1121,232],[1163,242],[1196,248],[1224,257],[1253,263],[1278,269],
 [933,238],[973,240],[1007,242],[1041,247],[1076,252],[1115,259],[1156,265],[1188,271],[1216,277],[1243,286],[1267,292],
 [929,270],[968,274],[1003,276],[1034,279],[1070,284],[1107,288],[1148,292],[1179,298],[1208,303],[1234,307],[1259,312]]).reshape(-1, 2) 
-# [927,309],[964,311],[996,312],[1029,313],[1062,316],[1101,319],[1140,322],[1170,326],[1199,329],[1225,333],[1250,336] 
+#[927,309],[964,311],[996,312],[1029,313],[1062,316],[1101,319],[1140,322],[1170,326],[1199,329],[1225,333],[1250,336]
 #%%
 corners123 = np.array([[1107,133],[1102,148],[1098,160],[1094,173],[1089,186],[1086,198],[1083,211],[1080,223],[1076,237],[1073,250],[1071,263],
 [1090,129],[1084,144],[1080,157],[1077,170],[1073,183],[1070,195],[1066,208],[1063,222],[1060,235],[1056,248],[1053,261],
@@ -133,50 +133,50 @@ corners126 = np.array([[720,305],[792,302],[878,303],[966,306],[1049,313],[1113,
 [734,656],[803,659],[874,659],[927,657],[982,654],[1030,648],[1082,639],[1129,626],[1167,617],[1198,611],[1218,603],
 [737,683],[801,687],[874,689],[925,687],[978,684],[1023,679],[1074,666],[1119,656],[1154,646],[1187,636],[1207,628]]).reshape(-1, 2) 
 #%%
-num = str(126)
-corners = corners126.reshape(-1,1,2)
+num = str(122)
+corners = corners122.reshape(-1,1,2)
 img = cv2.imread('chessboard/bkg-' + num +'.jpg')
-plt.imshow(img)
+# plt.imshow(img)
 
 for i in corners:
     x, y = i.ravel()
     cv2.circle(img, (x,y),3,255,-1)
 plt.imshow(img)
-np.save("gridpoints/corners" + num, corners)
+# np.save("gridpoints/corners" + num, corners)
 
 
 #%%
  
-# 找棋盘格角点
-# 阈值
-criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
-# 棋盘格模板规格
-w = 9
-h = 6
-# 世界坐标系中的棋盘格点,例如(0,0,0), (1,0,0), (2,0,0) ....,(8,5,0)，去掉Z坐标，记为二维矩阵
-objp = np.zeros((w * h, 3), np.float32)
-objp[:, :2] = np.mgrid[0:w, 0:h].T.reshape(-1, 2)
-# 储存棋盘格角点的世界坐标和图像坐标对
-objpoints = []  # 在世界坐标系中的三维点
-imgpoints = []  # 在图像平面的二维点
+# # 找棋盘格角点
+# # 阈值
+# criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+# # 棋盘格模板规格
+# w = 9
+# h = 6
+# # 世界坐标系中的棋盘格点,例如(0,0,0), (1,0,0), (2,0,0) ....,(8,5,0)，去掉Z坐标，记为二维矩阵
+# objp = np.zeros((w * h, 3), np.float32)
+# objp[:, :2] = np.mgrid[0:w, 0:h].T.reshape(-1, 2)
+# # 储存棋盘格角点的世界坐标和图像坐标对
+# objpoints = []  # 在世界坐标系中的三维点
+# imgpoints = []  # 在图像平面的二维点
  
-images = glob.glob('../fisheye_cali/chess*.png')
-for fname in images:
-    img = cv2.imread(fname)
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # 找到棋盘格角点
-    ret, corners = cv2.findChessboardCorners(gray, (w, h), None)
-    # 如果找到足够点对，将其存储起来
-    if ret == True:
-        cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
-        objpoints.append(objp)
-        imgpoints.append(corners)
-        # 将角点在图像上显示
-        cv2.drawChessboardCorners(img, (w, h), corners, ret)
-        plt.imshow(img)
-        # cv2.imwrite('D:images\\grid_out.png', img)
-        cv2.waitKey(1)
-cv2.destroyAllWindows()
+# images = glob.glob('../fisheye_cali/chess*.png')
+# for fname in images:
+#     img = cv2.imread(fname)
+#     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#     # 找到棋盘格角点
+#     ret, corners = cv2.findChessboardCorners(gray, (w, h), None)
+#     # 如果找到足够点对，将其存储起来
+#     if ret == True:
+#         cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
+#         objpoints.append(objp)
+#         imgpoints.append(corners)
+#         # 将角点在图像上显示
+#         cv2.drawChessboardCorners(img, (w, h), corners, ret)
+#         plt.imshow(img)
+#         # cv2.imwrite('D:images\\grid_out.png', img)
+#         cv2.waitKey(1)
+# cv2.destroyAllWindows()
 #%%
 w = 11
 h = 8
@@ -185,13 +185,12 @@ objp[:, :2] = np.mgrid[0:w, 0:h].T.reshape(-1, 2)
 objpoints = []  # 在世界坐标系中的三维点
 imgpoints = []  # 在图像平面的二维点
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-for i in [115,116,117,119,120,121,122,125,126]:
+for i in [117,118,119,120,123,125,126]:#,116,117,118,119,120,121,122,123]:#,124,125,126]:
     corners = np.load("gridpoints/corners" + str(i) + ".npy").astype(np.float32)
     objpoints.append(objp)
     imgpoints.append(corners)
 
-#%%
-plt.imshow(img2)
+
 #%%
 # 标定
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
@@ -200,8 +199,8 @@ ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.sh
 # print(rvecs)
 # print(tvecs)
 # 去畸变
-img2 = cv2.imread('../WechatIMG17.png')
-# img2 = cv2.imread('chessboard/bkg-124.jpg')
+# img2 = cv2.imread('../WechatIMG17.png')
+img2 = cv2.imread('chessboard/bkg-120.jpg')
 h, w = img2.shape[:2]
 newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))  # 自由比例参数
 dst = cv2.undistort(img2, mtx, dist, None, newcameramtx)
@@ -212,30 +211,31 @@ plt.imshow(dst)
 
 # cv2.imwrite('undistorted.png', dst)
  
-#%%
-# 反投影误差
-total_error = 0
-for i in range(len(objpoints)):
-    imgpoints2, _ = cv2.projectPoints(objpoints[i], rvecs[i], tvecs[i], mtx, dist)
-    error = cv2.norm(imgpoints[i], imgpoints2, cv2.NORM_L2) / len(imgpoints2)
-    total_error += error
-print("total error: ", total_error / len(objpoints))
+
+# #%%
+# # 反投影误差
+# total_error = 0
+# for i in range(len(objpoints)):
+#     imgpoints2, _ = cv2.projectPoints(objpoints[i], rvecs[i], tvecs[i], mtx, dist)
+#     error = cv2.norm(imgpoints[i], imgpoints2, cv2.NORM_L2) / len(imgpoints2)
+#     total_error += error
+# print("total error: ", total_error / len(objpoints))
  
-# 校正视频
-cap = cv2.VideoCapture('D:video\\video.mp4')
-height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-fps = int(cap.get(cv2.CAP_PROP_FPS))
-frame_size = (width, height)
-video_writer = cv2.VideoWriter('D:video\\result2.mp4', cv2.VideoWriter_fourcc(*"mp4v"), fps, frame_size)
-for frame_idx in range(int(cap.get(cv2.CAP_PROP_FRAME_COUNT))):
-    ret, frame = cap.read()
-    if ret:
-      image_ = cv2.undistort(frame, mtx, dist, None, newcameramtx)
-      cv2.imshow('jiaozheng', image_)
-      # gray=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-      video_writer.write(image_)
-    if cv2.waitKey(10) & 0xFF== ord('q'):
-        break
-cap.release()
-# cv2.destroyALLWindows()
+# # 校正视频
+# cap = cv2.VideoCapture('D:video\\video.mp4')
+# height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+# width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+# fps = int(cap.get(cv2.CAP_PROP_FPS))
+# frame_size = (width, height)
+# video_writer = cv2.VideoWriter('D:video\\result2.mp4', cv2.VideoWriter_fourcc(*"mp4v"), fps, frame_size)
+# for frame_idx in range(int(cap.get(cv2.CAP_PROP_FRAME_COUNT))):
+#     ret, frame = cap.read()
+#     if ret:
+#       image_ = cv2.undistort(frame, mtx, dist, None, newcameramtx)
+#       cv2.imshow('jiaozheng', image_)
+#       # gray=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+#       video_writer.write(image_)
+#     if cv2.waitKey(10) & 0xFF== ord('q'):
+#         break
+# cap.release()
+# # cv2.destroyALLWindows()
