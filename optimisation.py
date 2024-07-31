@@ -5,7 +5,7 @@ from scipy.optimize import minimize
 
 # Load the image
 # image_path = '../WechatIMG17.png'
-num = str(120)
+num = str(126)
 image_path = 'chessboard/bkg-' + num+ '.jpg'
 image = cv2.imread(image_path)
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -19,7 +19,12 @@ image_points = np.load("gridpoints/corners"+ num +".npy").astype(np.float32)
 
 # Corresponding ideal grid points in undistorted space
 # These points form a regular grid
-if num == str(115):
+if num == str(115): #flat， also 118,119,120
+    top_left = np.array([780, 528])
+    top_right = np.array([700, 100])
+    bottom_right = np.array([1168, 518])
+    bottom_left = np.array([50, 500])
+    
     x = np.linspace(780,1168,11)
     y = np.linspace(318,518,8)
     
@@ -27,9 +32,31 @@ elif num == str(116):
     x = np.linspace(318,733,11)
     y = np.linspace(255,516,8)
     
-elif num == str(120):
-    x = np.linspace(785,1225,11)
-    y = np.linspace(393,609,8)     
+# elif num == str(120):
+#     x = np.linspace(785,1225,11)
+#     y = np.linspace(393,609,8)     
+    
+elif num == str(121):
+    x = np.linspace(660,1208,11)
+    y = np.linspace(241,540,8)   
+    
+elif num == str(122):
+    x = np.linspace(904,1227,11)
+    y = np.linspace(61,343,8)     
+    
+elif num == str(124):
+    x = np.linspace(41,52,11)
+    y = np.linspace(243,587,8)  
+    
+elif num == str(125):
+    x = np.linspace(1127,1555,11)
+    y = np.linspace(277,604,8)  
+    
+elif num == str(126):
+    x = np.linspace(730,1235,11)
+    y = np.linspace(317,637,8)  
+else:
+    print("num not founnd")
 
 world_points = np.meshgrid(x,y)
 world_points = np.vstack([world_points[0].ravel(), world_points[1].ravel()]).T.reshape(-1,1,2)
@@ -41,7 +68,7 @@ plt.imshow(image)
 
 #%%
 # Initial guess for distortion coefficients (k1, k2, p1, p2, k3) and focal lengths (fx, fy)
-initial_guess = np.array([-1.0, 2, 0.0, 0.0, 0.0, 0.0, 0.0,0.0, image.shape[1]//2, image.shape[0]//2])
+initial_guess = np.array([-1.2, 0.7, 0.0, -0.0, 0.0, 0.0, 0.0,0.0, image.shape[1]//2, image.shape[0]//2])
 
 # Define the optimization function
 def distortion_error(params, image_points, world_points, image_size):
@@ -84,3 +111,9 @@ plt.subplot(1, 2, 2)
 plt.title('Undistorted Image')
 plt.imshow(cv2.cvtColor(undistorted_image, cv2.COLOR_BGR2RGB))
 plt.show()
+
+#%%
+image2 = cv2.imread("../WechatIMG17.png")
+undistorted_image2 = cv2.undistort(image2, mtx, dist)
+plt.imshow(cv2.cvtColor(undistorted_image2, cv2.COLOR_BGR2RGB))
+plt.savefig("optimisation_undistorted.jpg")
