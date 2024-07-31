@@ -1,1 +1,28 @@
 princess i love u 
+hello bb i love u more
+
+chessoard/: pics with handdrawn grids
+
+gridpoints/: grid points coordinantes of above grids
+
+4models.py: taking panorama as fisheye lens, using distortion equations from different fisheye lens to undistort.see https://en.wikipedia.org/wiki/Fisheye_lens
+
+c2S.py: method try to remap ellipse to rectangle, doesn't work yet
+
+calibrate.py: calibrate camera using chessboard pics, example copied from online
+
+chessboard.py: using grid points I drew to try calirate camera, first half is saving the data
+
+fisheye_cali.py: duplicate of trial_param should delete later
+
+grid_detection.py: using gridlines I drew detect grid points. Works but points need sorting.
+
+line_detectio.py: detect lines in image, not used cuz too many lines detected
+
+optimisation.py: minimising distance of grid points of hand-drawn grids and ideal grid points to get matrix and dist params.
+
+trial_chinese.py: another example from online using chessboard method. can ignore
+
+trial_params.py: trying by hand. seconnd + third block is using one method with dist involving only [k1,k2,k3,k4]. last block uses another method with dist = [k1,k2,p1,p2,k3]
+
+trial_using_defisheye.py: existing module doesnt work in our case as its panorama.
