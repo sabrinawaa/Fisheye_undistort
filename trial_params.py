@@ -11,7 +11,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the fisheye image
-img = cv2.imread('../WechatIMG3.png')
+# img = cv2.imread('../WechatIMG3.png')
+img = cv2.imread("rec_method.png")
 plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 
 # Define the dimensions of the image
@@ -106,34 +107,76 @@ for k11 in k1:
         # plt.title("fy="+str(fxx))
         plt.imshow(cv2.cvtColor(undistorted_img, cv2.COLOR_BGR2RGB))
         plt.savefig("fisheye_cali/k1="+str(k11)+"k2="+str(k22)+"k3="+str(k3)+"k4="+str(k4)+".jpg")
- 
+        
+        #%%
+K = np.array([[1300, 0, width // 2],
+               [0, 150, height // 2],
+               [0, 0, 1]], dtype=np.float32)
+
+D = np.array([0.1, 0, 0,0], dtype=np.float32)
+newcameramtx, roi = cv2.getOptimalNewCameraMatrix(K, D, (w, h),0) 
+# Undistort the image
+map1, map2 = cv2.fisheye.initUndistortRectifyMap(K, D, None, newcameramtx, (width, height), 5)
+undistorted_img = cv2.remap(img, map1, map2, interpolation=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
+
+plt.imshow(cv2.cvtColor(undistorted_img, cv2.COLOR_BGR2RGB)) 
         #%%
 # 去畸变
-img = cv2.imread('../WechatIMG17.png')
+# img = cv2.imread('../WechatIMG17.png')
 
 h, w = img.shape[:2]
 
-mtx = np.array([[704, 0.00000000e+00, w//2],
-       [0.00000000e+00, 1076 ,h//2],
-       [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
 
-dist = np.array([[0.013, 0.31,  0.0, -0.0,  -0.2]])
+mtx = np.array([[1300, 0.00000000e+00, w//2],
+        [0.00000000e+00, 150, h//2],
+        [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
 
-# mtx = np.array([[1.4e+03, 0.00000000e+00, w//2],
-#         [0.00000000e+00, 1.9e+03 ,h//2],
-#         [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
-
-# dist = np.array([[-0.54, -1.5,  -0.0, 0.0,  1.3]])
-
-# mtx = np.array([[1300, 0.00000000e+00, w//2],
-#         [0.00000000e+00, 150, h//2],
-#         [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
-
-# dist = np.array([[0.1,  -0.01,  -0.0 , -0.0, -0.005]])
+dist = np.array([[0.1,  0.0,  -0.0 , 0.0, -0.00]])
 
 newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))  # 自由比例参数
 dst = cv2.undistort(img, mtx, dist, None, newcameramtx)
+plt.figure()
 plt.title("dist="+str(dist) + 'fx,fy=' +str(mtx[0][0]) + ',' + str(mtx[1][1]))
-plt.imshow(dst)
-# cv2.imwrite('undistorted.png', dst)
+plt.imshow(cv2.cvtColor(dst, cv2.COLOR_BGR2RGB))
+cv2.imwrite('undistorted.png', dst)
 
+
+#%%
+
+# Camera matrix and distortion coefficients
+h, w = img.shape[:2]
+K = np.array([[1300, 0, w // 2],
+              [0, 150, h // 2],
+              [0, 0, 1]], dtype=np.float32)
+
+D = np.array([0.1, 0, 0, 0], dtype=np.float32)
+
+# Compute new camera matrix for undistort
+newcameramtx, roi = cv2.getOptimalNewCameraMatrix(K, D, (w, h), 1, (w, h))
+
+# Method 1: Using cv2.undistort
+undistorted_img1 = cv2.undistort(img, K, D, None, newcameramtx)
+
+# Method 2: Using cv2.initUndistortRectifyMap
+map1, map2 = cv2.initUndistortRectifyMap(K, D, None, newcameramtx, (w, h), cv2.CV_32FC1)
+undistorted_img2 = cv2.remap(img, map1, map2, interpolation=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
+
+# Display results
+plt.figure(figsize=(20, 10))
+
+plt.subplot(1, 3, 1)
+plt.title("Original Image")
+plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+plt.axis('off')
+
+plt.subplot(1, 3, 2)
+plt.title("Undistorted Image - cv2.undistort")
+plt.imshow(cv2.cvtColor(undistorted_img1, cv2.COLOR_BGR2RGB))
+plt.axis('off')
+
+plt.subplot(1, 3, 3)
+plt.title("Undistorted Image - cv2.initUndistortRectifyMap")
+plt.imshow(cv2.cvtColor(undistorted_img2, cv2.COLOR_BGR2RGB))
+plt.axis('off')
+
+plt.show()
