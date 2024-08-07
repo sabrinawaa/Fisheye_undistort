@@ -5,7 +5,7 @@ from scipy.optimize import minimize
 
 # Load the image
 # image_path = '../WechatIMG17.png'
-num = str(126)
+num = str(127)
 image_path = 'chessboard/bkg-' + num+ '.jpg'
 image = cv2.imread(image_path)
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -55,6 +55,11 @@ elif num == str(125):
 elif num == str(126):
     x = np.linspace(730,1235,11)
     y = np.linspace(317,637,8)  
+    
+elif num == str(127):
+    x = np.linspace(60,1578,21)
+    y = np.linspace(57,671,10)  
+    
 else:
     print("num not founnd")
 
@@ -68,7 +73,7 @@ plt.imshow(image)
 
 #%%
 # Initial guess for distortion coefficients (k1, k2, p1, p2, k3) and focal lengths (fx, fy)
-initial_guess = np.array([-1.2, 0.7, 0.0, -0.0, 0.0, 0.0, 0.0,0.0, image.shape[1]//2, image.shape[0]//2])
+initial_guess = np.array([-0.0, 0.7, 0.0, -0.0, 0.0, 0.0, 0.0,0.0, image.shape[1]//2, image.shape[0]//2])
 
 # Define the optimization function
 def distortion_error(params, image_points, world_points, image_size):
