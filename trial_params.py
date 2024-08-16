@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the fisheye image
-# img = cv2.imread('../WechatIMG3.png')
+# img = cv2.imread('../WechatIMG1.png')
 img = cv2.imread("rec_method.png")
 plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 
@@ -123,7 +123,7 @@ plt.imshow(cv2.cvtColor(undistorted_img, cv2.COLOR_BGR2RGB))
         #%%
 # 去畸变
 # img = cv2.imread('../WechatIMG17.png')
-
+# img = new_img
 h, w = img.shape[:2]
 
 
@@ -131,7 +131,7 @@ mtx = np.array([[1300, 0.00000000e+00, w//2],
         [0.00000000e+00, 150, h//2],
         [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
 
-dist = np.array([[0.1,  0.0,  -0.0 , 0.0, -0.00]])
+dist = np.array([[-0.0,  0.0,  -0.04 , -0.00, 0.0]])
 
 newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))  # 自由比例参数
 dst = cv2.undistort(img, mtx, dist, None, newcameramtx)
@@ -180,3 +180,22 @@ plt.imshow(cv2.cvtColor(undistorted_img2, cv2.COLOR_BGR2RGB))
 plt.axis('off')
 
 plt.show()
+
+#%%
+img = cv2.imread('zen.jpg')
+rows, cols, ch = img.shape    
+pts1 = np.float32(
+    [[cols*.25, rows*.95],
+     [cols*.90, rows*.95],
+     [cols*.10, 0],
+     [cols,     0]]
+)
+pts2 = np.float32(
+    [[cols*0.1, rows],
+     [cols,     rows],
+     [0,        0],
+     [cols,     0]]
+)    
+M = cv2.getPerspectiveTransform(pts1,pts2)
+dst = cv2.warpPerspective(img, M, (cols, rows))
+cv2.imshow('My Zen Garden', dst)

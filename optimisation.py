@@ -99,8 +99,8 @@ k1, k2, p1, p2, k3, k4, k5, k6, fx, fy = optimized_params
 
 # Apply the optimized distortion coefficients
 mtx = np.array([[fx, 0, image_size[1] / 2],
-                          [0, fy, image_size[0] / 2],
-                          [0, 0, 1]], dtype=np.float32)
+                [0, fy, image_size[0] / 2],
+                [0, 0, 1]], dtype=np.float32)
 dist = np.array([k1, k2, p1, p2, k3, k4,k5,k6], dtype=np.float32)
 
 # Undistort the image
