@@ -13,7 +13,7 @@ from scipy.ndimage import map_coordinates
 from datetime import datetime
 #%%
 
-def undistort_map (img, x_scale, y_scale, fx, fy, k1, k2, k3,fov_h=180, fov_v=85):
+def undistort_map (img, x_scale, y_scale, pan_angle,fov_h=180, fov_v=85):
     pi = 3.14159265
     height, width = img.shape[:2]
     new_width = int(width *2.2)
@@ -22,10 +22,15 @@ def undistort_map (img, x_scale, y_scale, fx, fy, k1, k2, k3,fov_h=180, fov_v=85
     fov_vertical_rad = fov_vertical * pi/180
     
     # Calculate the radius of the cylindrical projection
-    fxx = width / fov_horizontal_rad
+    fx = width / fov_horizontal_rad
     
     # Calculate the height scaling factor
-    fyy = height / fov_vertical_rad # or tan
+    fy = height / fov_vertical_rad # or tan
+    
+    # Calculate the corresponding horizontal shift based on the pan angle
+    shift_x = width * np.tan(np.radians(pan_angle)) /2
+    shifts = np.linspace(0, shift_x * 2, height)
+    factors = (width + shifts)/(width)
     
     # Create meshgrid for coordinates
     x = np.arange(new_width)
@@ -34,47 +39,40 @@ def undistort_map (img, x_scale, y_scale, fx, fy, k1, k2, k3,fov_h=180, fov_v=85
     
     y_c = (y_grid - height/2) * y_scale
     x_c = (x_grid - new_width/2) * x_scale
+    
+    x_c = x_c / factors[:, np.newaxis]
         
-    yy = fyy * y_c / fxx / np.sqrt((x_c/fx)**2 + 1)
-    xx = fxx * np.arctan(x_c/fx)
+    yy = fy * y_c / fx / np.sqrt((x_c/fx)**2 + 1)
+    xx = fx * np.arctan(x_c/fx)
     
-    X_norm = xx/fx
-    Y_norm = yy/fy
-    R2 = X_norm**2 + Y_norm**2
-    # Apply radial distortion correction
-    radial_distortion = 1 + k1 * R2 + k2 * R2**2 + k3 * R2**3
-    X_distorted = X_norm * radial_distortion
-    Y_distorted = Y_norm * radial_distortion
+    new_x = xx + width//2
+    new_y = yy + height//2
     
-    new_x = (fx * X_distorted + width / 2).astype(np.float32)
-    new_y = (fy * Y_distorted + height / 2).astype(np.float32)
-
-    
-    return new_x,new_y
+    return new_x.astype(np.float32), new_y.astype(np.float32)
 
 img = cv2.imread("../WechatIMG1.png")
 # img = cv2.imread("frame.png")
 fov_horizontal = 180
 fov_vertical = 85
-fx,fy = 1300,150
+pan_angle = 25
 
-k1 = 0.05
-k2 = 0.0
-k3 = 0.0
 x_scale = 2
 y_scale = 1
 
-new_x, new_y = undistort_map(img, x_scale, y_scale, fx, fy, k1, k2, k3,fov_horizontal,fov_vertical)
+new_x, new_y = undistort_map(img, x_scale, y_scale, pan_angle, fov_horizontal,fov_vertical)
 
 time1 = datetime.now()
 
 new_img = cv2.remap(img, new_x, new_y, interpolation=cv2.INTER_LINEAR, 
                     borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0))
+
+
 time2 = datetime.now()
+
 plt.figure()
 plt.imshow(cv2.cvtColor(new_img, cv2.COLOR_BGR2RGB))
-time3 = datetime.now()
-print(time2-time1,time3-time1)
+
+print(time2-time1)
 
 #%%
 
